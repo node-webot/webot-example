@@ -1,8 +1,8 @@
 var express = require('express');
 var webot = require('weixin-robot');
 
-var log = require('debug')('webot:log');
-var verbose = require('debug')('webot:verbose');
+var log = require('debug')('webot-example:log');
+var verbose = require('debug')('webot-example:verbose');
 
 //启动服务
 var app = express();
@@ -29,5 +29,5 @@ app.enable('trust proxy');
 // app.listen(80);
 
 if(!process.env.DEBUG){
-  console.log("set env variable `DEBUG=webot:*` to display debug info.");
+  console.log("set env variable `DEBUG=webot-example:*` to display debug info.");
 }

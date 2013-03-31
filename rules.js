@@ -1,9 +1,9 @@
 var crypto = require('crypto');
 
 var debug = require('debug');
-var log = debug('webot:log');
-var verbose = debug('webot:verbose');
-var error = debug('webot:error');
+var log = debug('webot-example:log');
+var verbose = debug('webot-example:verbose');
+var error = debug('webot-example:error');
 
 var _ = require('underscore')._;
 var search = require('./support').search;

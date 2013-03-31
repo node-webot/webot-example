@@ -1,5 +1,5 @@
 var debug = require('debug');
-var log = debug('webot:example');
+var log = debug('webot-example:log');
 
 var _ = require('underscore')._;
 var request = require('request');

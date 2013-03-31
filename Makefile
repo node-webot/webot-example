@@ -1,3 +1,3 @@
 start:
-	@export DEBUG=weixin:*
+	@export DEBUG=webot-example:*
 	@npm start
