@@ -1,4 +1,4 @@
-# 微信公共帐号机器人(Weixin Robot) 示例
+# 微信公共帐号机器人示例 [![Build Status](https://api.travis-ci.org/ktmud/weixin-robot-example.png?branch=master)](https://travis-ci.org/ktmud/weixin-robot-example)
 
 ## 本地运行
 
