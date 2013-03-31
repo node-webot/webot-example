@@ -5,4 +5,4 @@ clear:
 	@clear
 
 test: clear
-	@export DEBUG=webot* && export WX_TOKEN=test123 && mocha
+	@export DEBUG=webot* && export WX_TOKEN=test123 && ./node_modules/.bin/mocha
