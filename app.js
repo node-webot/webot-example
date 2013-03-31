@@ -18,7 +18,7 @@ require('./rules.js')(webot);
 
 // 在环境变量提供的 $PORT 或 3000 端口监听
 var port = process.env.PORT || 3000;
-app.listen(port, '127.0.0.1', function(){
+app.listen(port, function(){
   log("Listening on %s", port);
 });
 
