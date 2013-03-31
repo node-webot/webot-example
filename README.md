@@ -42,5 +42,5 @@ npm test
 
 # Credit
 
-`weixin-robot` 的[初始版本](https://github.com/ktmud/weixin-robot/tree/0.0.x)由[@ktmud](://github.com/ktmud)实现，
+[weixin-robot](https://github.com/ktmud/weixin-robot) 的[初始版本](https://github.com/ktmud/weixin-robot/tree/0.0.x)由[@ktmud](://github.com/ktmud)实现，
 [@atian](https://github.com/atian25)重构并扩展为 0.2 版本，目前的大部分测试用例与文档也是由他完成。
