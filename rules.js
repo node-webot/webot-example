@@ -79,6 +79,8 @@ module.exports = exports = function(webot){
     handler: '你好,{1}'
   });
 
+  // make node require a yaml file possible
+  require('js-yaml');
   // 简单的纯文本对话，可以用单独的 yaml 文件来定义
   webot.dialog(__dirname + '/dialog.yaml');
 
