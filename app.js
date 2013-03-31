@@ -2,6 +2,7 @@ var express = require('express');
 var webot = require('weixin-robot');
 
 var log = require('debug')('webot:log');
+var verbose = require('debug')('webot:verbose');
 
 //启动服务
 var app = express();
@@ -15,9 +16,10 @@ webot.monitor(WX_TOKEN, '/weixin', app);
 // 载入路由规则
 require('./rules.js')(webot);
 
-// 在 3000 端口监听
-app.listen(3000, '127.0.0.1', function(){
-  log("Now you have a robot.");
+// 在环境变量提供的 $PORT 或 3000 端口监听
+var port = process.env.PORT || 3000;
+app.listen(port, '127.0.0.1', function(){
+  log("Listening on %s", port);
 });
 
 // 微信后台只允许 80 端口，你可能需要自己做一层 proxy
@@ -27,5 +29,5 @@ app.enable('trust proxy');
 // app.listen(80);
 
 if(!process.env.DEBUG){
-  console.log("use `SET DEBUG=webot:*` to got debug info. current env is: %s ", process.env.DEBUG);
+  console.log("set env variable `DEBUG=webot:*` to display debug info.");
 }

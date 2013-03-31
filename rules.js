@@ -2,6 +2,8 @@ var crypto = require('crypto');
 
 var debug = require('debug');
 var log = debug('webot:log');
+var verbose = debug('webot:verbose');
+var error = debug('webot:error');
 
 var _ = require('underscore')._;
 var search = require('./support').search;
@@ -161,7 +163,7 @@ module.exports = exports = function(webot){
       //等待下一次回复
       var retryCount = 3;
       var num = Number(info.query[1]) || _.random(1,9);
-      log('answer is: ' + num);
+      verbose('answer is: ' + num);
       webot.wait(info.user, function(next_info, next_action){
         var text = Number(next_info.text);
         if(text){
@@ -275,7 +277,7 @@ module.exports = exports = function(webot){
       return info.isImage();
     },
     handler: function(info, action, next){
-      log('image url: %s', info.pic);
+      verbose('image url: %s', info.pic);
       try{
         var shasum = crypto.createHash('md5');
 
@@ -288,6 +290,7 @@ module.exports = exports = function(webot){
           return next(null, '你的图片hash: ' + shasum.digest('hex'));
         });
       }catch(e){
+        error('Failed hashing image: %s', e)
         return '生成图片hash失败: ' + e;
       }
     }
@@ -316,6 +319,9 @@ module.exports = exports = function(webot){
 
   //所有消息都无法匹配时的fallback
   webot.set(/.*/, function(info, action){
+    // 利用 error log 收集听不懂的消息，以利于接下来完善规则
+    // 你也可以将这些 message 存入数据库
+    error('unknown message: %s', info.text);
     return '你发送了「' + info.text + '」,可惜我太笨了,听不懂. 发送: help 查看可用的指令';
   });
 };
