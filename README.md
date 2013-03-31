@@ -24,7 +24,6 @@ webot -e # 调试事件消息
 ## 本地测试
 
 ```bash
-npm install mocha -g
 npm test
 ```
 

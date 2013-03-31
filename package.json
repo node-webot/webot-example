@@ -11,7 +11,8 @@
     "weixin-robot": "~0.3.0pre"
   },
   "devDependencies": {
-    "should": "*"
+    "should": "*",
+    "mocha": "*"
   },
   "engines": {
     "node" : ">=0.8.0",
