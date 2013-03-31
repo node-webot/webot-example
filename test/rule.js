@@ -141,7 +141,7 @@ describe('Rule', function(){
             detect(info, err, json, /再猜/);
             info.text = '4';
             sendRequest(info, function(err, json){
-              detect(info, err, json, /IQ/);
+              detect(info, err, json, /答案是/);
               done();
             });
           });

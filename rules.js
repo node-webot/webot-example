@@ -23,7 +23,7 @@ module.exports = exports = function(webot){
     pattern: function(info){
       return info.event === 'subscribe' || reg_help.test(info.text);
     },
-    handler: function(info, action){
+    handler: function(info){
       //this.description = '回复help查看帮助';
       var reply = {
         title: '感谢你收听webot机器人',
@@ -46,12 +46,12 @@ module.exports = exports = function(webot){
   });
 
   // 更简单地设置一条规则
-  webot.set(/^more$/i, function(info, action){
-    var reply = _.chain(webot.get()).filter(function(action){
-      return action.description;
-    }).map(function(action){
-      //console.log(action.name)
-      return '> ' + action.description;
+  webot.set(/^more$/i, function(info){
+    var reply = _.chain(webot.get()).filter(function(rule){
+      return rule.description;
+    }).map(function(rule){
+      //console.log(rule.name)
+      return '> ' + rule.description;
     }).join('\n').value();
     
     return '我的主人还没教我太多东西,你可以考虑帮我加下.\n可用的指令:\n'+ reply;
@@ -87,7 +87,7 @@ module.exports = exports = function(webot){
     name: 'morning',
     description: '打个招呼吧, 发送: good morning',
     pattern: /^(早上?好?|(good )?moring)[啊\!！\.。]*$/i,
-    handler: function(info, action){
+    handler: function(info){
       var d = new Date();
       var h = d.getHours();
       if (h < 3) return '[嘘] 我这边还是深夜呢，别吵着大家了';
@@ -130,7 +130,7 @@ module.exports = exports = function(webot){
     replies: {
       //正则作为key的时候,注意要转义
       '/^g(irl)?\\??$/i': '猜错',
-      'boy': function(info, action, next){
+      'boy': function(info, next){
         return next(null, '猜对了');
       },
       'both': '对你无语...'
@@ -156,31 +156,37 @@ module.exports = exports = function(webot){
   
   // 也可以这样wait,并且rewait
   webot.set({
-    name: 'guest_game',
+    name: 'guess_game',
     description: '发送: game , 玩玩猜数字的游戏吧',
     pattern: /(?:game|玩?游戏)\s*(\d*)/,
-    handler: function(info, action){
+    handler: function(info){
       //等待下一次回复
       var retryCount = 3;
       var num = Number(info.query[1]) || _.random(1,9);
+
       verbose('answer is: ' + num);
-      webot.wait(info.user, function(next_info, next_action){
-        var text = Number(next_info.text);
-        if(text){
-          if(text == num){
-            return '你真聪明!';
-          }else if(retryCount > 1){
-            retryCount--;
-            //重试
-            webot.rewait(info.user);
-            return (text > num ? '大了': '小了') +',还有' + retryCount + '次机会,再猜.';
-          }else{
-            return '好吧,你的IQ有点抓急,谜底是: ' + num;
-          }
-        }else{
-          //不是文本消息,跳过,交给下一个action
+
+      webot.wait(info.user, function(replied_info){
+        var r= Number(replied_info.text);
+
+        // 用户不想玩了...
+        if (isNaN(r)) {
+          webot.data(info.user. null);
           return null;
         }
+
+        if (r === num){
+          return '你真聪明!';
+        }
+
+        retryCount--;
+        if (retryCount <= 0) {
+          return '怎么这样都猜不出来！答案是 ' + num + ' 啊！';
+        }
+
+        //重试
+        webot.rewait(info.user);
+        return (r > num ? '大了': '小了') +',还有' + retryCount + '次机会,再猜.';
       });
       return '玩玩猜数字的游戏吧, 1~9,选一个';
     }
@@ -191,25 +197,33 @@ module.exports = exports = function(webot){
     name: 'suggest_keyword',
     description: '发送: s nde ,然后再回复Y或其他',
     pattern: /^(?:搜索?|search|s\b)\s*(.+)/i,
-    handler: function(info, action){
+    handler: function(info){
       var q = info.query[1];
-      if(q == 'nde'){
+      if (q === 'nde') {
         webot.wait(info.user,{
           name: 'try_waiter_suggest',
-          handler: function(next_info, next_action, next_handler){
-            if(next_info.text.match(/^(好|要|y)$/i)){
-              //next_handler(null, '输入变更为: node');
-              //注意,这里用的是上一次的info,而不是next_info
-              info.query[1] = 'nodejs';
+          handler: function(replied_info, next){
+            if (!replied_info.text) {
+              return next();
+            }
 
-              webot.exec(info, webot.get('search'), next_handler);
+            // 按照定义规则的 name 获取其他 handler
+            var rule_search = webot.get('search');
 
-              // 事实上，你也可以为你的 search handler 命名，
-              // 并在此直接调用：
-              // do_search(info, next_action, next_handler);
-            }else{
-              //next_handler(null, '仍然输入:'+ next_action.data);
-              webot.exec(info, webot.get('search'), next_handler);
+            // 用户回复回来的消息
+            if (replied_info.text.match(/^(好|要|y)$/i)) {
+
+              // 修改回复消息的匹配文本，传入搜索命令执行
+              info.query = ['s nodejs', 'nodejs'];
+
+              // 执行某条规则
+              webot.exec(info, rule_search, next);
+            } else {
+              // 或者直接调用 handler :
+              rule_search.handler(info, next);
+
+              // 甚至直接用命名好的 function name 来调用：
+              // do_search(info, next);
             }
           }
         });
@@ -218,7 +232,7 @@ module.exports = exports = function(webot){
     }
   });
 
-  function do_search(info, action, next){
+  function do_search(info, next){
     // pattern的解析结果将放在query里
     var q = info.query[1];
     log('searching: ', q);
@@ -241,13 +255,13 @@ module.exports = exports = function(webot){
     name: 'timeout',
     description: '输入timeout,等待5秒后回复,会提示超时',
     pattern: 'timeout',
-    handler: function(info, action){
+    handler: function(info){
       var now = new Date().getTime();
-      webot.wait(info.user, function(next_info, next_action){
+      webot.wait(info.user, function(replied_info){
         if(new Date().getTime() - now > 5000){
           return '你的操作超时了,请重新输入';
         }else{
-          return '你在规定时限里面输入了: ' + next_info.text;
+          return '你在规定时限里面输入了: ' + replied_info.text;
         }
       });
       return '请等待5秒后回复';
@@ -262,7 +276,7 @@ module.exports = exports = function(webot){
     pattern: function(info){
       return info.isLocation();
     },
-    handler: function(info, action, next){
+    handler: function(info, next){
       geo2loc(info, function(err, location, data){
         next(null, location ? '你正在' + location : '我不知道你在什么地方。');
       });
@@ -276,7 +290,7 @@ module.exports = exports = function(webot){
     pattern: function(info){
       return info.isImage();
     },
-    handler: function(info, action, next){
+    handler: function(info, next){
       verbose('image url: %s', info.pic);
       try{
         var shasum = crypto.createHash('md5');
@@ -307,7 +321,7 @@ module.exports = exports = function(webot){
     name: 'reply_news',
     description: '发送news,我将回复图文消息你',
     pattern: /^news\s*(\d*)$/,
-    handler: function(info, action){
+    handler: function(info){
       var reply = [
         {title: '微信机器人', description: '微信机器人测试帐号：webot', pic: 'https://raw.github.com/ktmud/weixin-robot-example/master/qrcode.jpg', url: 'https://github.com/ktmud/weixin-robot-example'},
         {title: '豆瓣同城微信帐号', description: '豆瓣同城微信帐号二维码：douban-event', pic: 'http://i.imgur.com/ijE19.jpg', url: 'https://github.com/ktmud/weixin-robot'},
@@ -318,7 +332,7 @@ module.exports = exports = function(webot){
   });
 
   //所有消息都无法匹配时的fallback
-  webot.set(/.*/, function(info, action){
+  webot.set(/.*/, function(info){
     // 利用 error log 收集听不懂的消息，以利于接下来完善规则
     // 你也可以将这些 message 存入数据库
     error('unknown message: %s', info.text);
