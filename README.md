@@ -40,6 +40,12 @@ npm test
 2. 修改你自己的 app.js ，填写你在微信后台输入的 token 
 3. 参考 rules.js ，新建你自己的回复规则
 
+## 发布到云平台
+
+仓库中的 `Procfile` 为 [heroku](http://www.heroku.com/) 的配置文件。
+`manifest.yml` 为 [cloudfoundry](http://www.cloudfoundry.com/) 的示例配置文件。
+
+
 # Credit
 
 [weixin-robot](https://github.com/ktmud/weixin-robot) 的[初始版本](https://github.com/ktmud/weixin-robot/tree/0.0.x)由[@ktmud](://github.com/ktmud)实现，
