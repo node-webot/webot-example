@@ -12,6 +12,7 @@
   },
   "devDependencies": {
     "should": "*",
+    "xml2js": "*",
     "mocha": "*"
   },
   "engines": {
@@ -20,7 +21,7 @@
   },
   "scripts": {
     "start": "node app.js",
-    "test": "mocha"
+    "test": "make test"
   },
   "repository": "",
   "author": "",
