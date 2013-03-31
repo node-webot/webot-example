@@ -30,7 +30,9 @@ npm test
 
 ## 在微信上试用此示例
 
- - 微信账号：webot-test
+- 微信账号：webot-test
+
+![qrcode: webot-test](https://raw.github.com/ktmud/weixin-robot-example/master/qrcode.jpg)
 
 # 搭建你自己的机器人
 
