@@ -8,10 +8,10 @@ var verbose = require('debug')('webot-example:verbose');
 var app = express();
 
 //实际使用时，这里填写你在微信公共平台后台填写的 token
-var WX_TOKEN ='keyboardcat123';
+var wx_token = process.env.WX_TOKEN || 'keyboardcat123';
 
 //启动机器人, 接管 web 服务请求
-webot.monitor(WX_TOKEN, '/weixin', app);
+webot.monitor(wx_token, '/weixin', app);
 
 // 载入路由规则
 require('./rules.js')(webot);
