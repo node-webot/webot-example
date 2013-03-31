@@ -1,9 +1,13 @@
 var should = require('should');
 
-var bootstrap = require('../../bin/bootstrap.js');
+var token = process.env.WX_TOKEN || 'keyboardcat123';
+var port = process.env.PORT || 3000;
+
+var bootstrap = require('./bootstrap.js');
 var makeRequest = bootstrap.makeRequest;
-var sendRequest = makeRequest('http://localhost:3000/weixin', 'keyboardcat123');
-var app = require('../');
+var sendRequest = makeRequest('http://localhost:' + port, token);
+
+var app = require('../app.js');
 
 //公用检测指令
 var detect = function(info, err, json, content){
@@ -251,12 +255,11 @@ describe('Rule', function(){
   //测试图片
   describe('image', function(){
     //检测check_location指令
-    it('should return image msg', function(done){
+    it('should return good hash', function(done){
       info.type = 'image';
       sendRequest(info, function(err, json){
         detect(info, err, json, /图片/);
-        var tmp = json.Content.match(/你的图片HASH: (.*)/);
-        should.exist(tmp);
+        json.Content.should.include('你的图片');
         done()
       });
     });

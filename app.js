@@ -10,8 +10,16 @@ var app = express();
 //实际使用时，这里填写你在微信公共平台后台填写的 token
 var wx_token = process.env.WX_TOKEN || 'keyboardcat123';
 
+try {
+  // for submodulized repository only
+  webot = require('../lib/webot.js');
+} catch (e) {}
+
 //启动机器人, 接管 web 服务请求
-webot.monitor(wx_token, '/weixin', app);
+webot.watch(app, wx_token);
+
+// 也可以监听到子目录
+// webot.watch(app, '/weixin',  wx_token);
 
 // 载入路由规则
 require('./rules.js')(webot);
