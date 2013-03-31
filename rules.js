@@ -25,10 +25,9 @@ module.exports = exports = function(webot){
       //this.description = '回复help查看帮助';
       var reply = {
         title: '感谢你收听webot机器人',
-        pic: 'https://raw.github.com/ktmud/weixin-robot/master/examples/qrcode.jpg',
-        url: 'https://github.com/ktmud/weixin-robot',
+        pic: 'https://raw.github.com/ktmud/weixin-robot-example/master/qrcode.jpg',
+        url: 'https://github.com/ktmud/weixin-robot-example',
         description: [
-          '**欢迎你,来自开源中国的朋友**\n',
           '建议你试试这几条指令:\n',
             '1. game : 玩玩猜数字的游戏吧\n',
             '2. s+空格+关键词 : 我会帮你百度搜索喔\n',
@@ -307,9 +306,9 @@ module.exports = exports = function(webot){
     pattern: /^news\s*(\d*)$/,
     handler: function(info, action){
       var reply = [
-        {title: '微信机器人', description: '微信机器人测试帐号：webot', pic: 'https://raw.github.com/ktmud/weixin-robot/master/examples/qrcode.jpg', url: 'https://github.com/atian25'},
+        {title: '微信机器人', description: '微信机器人测试帐号：webot', pic: 'https://raw.github.com/ktmud/weixin-robot-example/master/qrcode.jpg', url: 'https://github.com/ktmud/weixin-robot-example'},
         {title: '豆瓣同城微信帐号', description: '豆瓣同城微信帐号二维码：douban-event', pic: 'http://i.imgur.com/ijE19.jpg', url: 'https://github.com/ktmud/weixin-robot'},
-        {title: '图文消息3', description: '图文消息描述3', pic: 'https://raw.github.com/ktmud/weixin-robot/master/examples/qrcode.jpg', url: 'http://www.baidu.com'}
+        {title: '图文消息3', description: '图文消息描述3', pic: 'https://raw.github.com/ktmud/weixin-robot-example/master/qrcode.jpg', url: 'http://www.baidu.com'}
       ];
       return Number(info.query[1])== 1 ? [reply[0]] : reply;
     }
