@@ -1,6 +1,6 @@
 {
   "name": "weixin-robot-example",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "app.js",
   "dependencies": {
     "express": "~3.0",
@@ -8,7 +8,7 @@
     "underscore": "~1.4",
     "debug": "~0.7.2",
     "js-yaml": "~2.0.3",
-    "weixin-robot": "~0.3.0pre"
+    "weixin-robot": "~0.3.0"
   },
   "devDependencies": {
     "should": "*",

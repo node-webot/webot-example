@@ -115,21 +115,25 @@ describe('Rule', function(){
   //测试wait
   describe('wait', function(){
     //检测sex指令
-    it('should return ask_sex msg', function(done){
-      info.text = 'sex';
+    it('should pass guess sex', function(done){
+      info.text = '你是男人还是女人';
       sendRequest(info, function(err, json){
         detect(info, err, json, /猜猜看/);
         //下次回复
-        info.text = 'g';
+        info.text = '哈哈';
         sendRequest(info, function(err, json){
-          detect(info, err, json, /猜错/);
-          done();
+          detect(info, err, json, /还猜不猜嘛/);
+          info.text = '男的';
+          sendRequest(info, function(err, json){
+            detect(info, err, json, /是的/);
+            done();
+          });
         });
       });
     });
 
     //检测game指令
-    it('should return game-no-found msg', function(done){
+    it('should pass game-no-found', function(done){
       info.text = 'game 1';
       sendRequest(info, function(err, json){
         detect(info, err, json, /游戏/);

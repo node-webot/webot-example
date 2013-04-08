@@ -30,18 +30,18 @@ module.exports = exports = function(webot){
         pic: 'https://raw.github.com/ktmud/weixin-robot-example/master/qrcode.jpg',
         url: 'https://github.com/ktmud/weixin-robot-example',
         description: [
-          '建议你试试这几条指令:\n',
-            '1. game : 玩玩猜数字的游戏吧\n',
-            '2. s+空格+关键词 : 我会帮你百度搜索喔\n',
-            '3. s+空格+nde : 可以试试我的纠错能力\n',
-            '4. 发送你的经纬度\n',
-            '5. 重看本指令请回复help或问号\n',
-            '6. 更多指令请回复more\n',
+          '建议你试试这几条指令:',
+            '1. game : 玩玩猜数字的游戏吧',
+            '2. s+空格+关键词 : 我会帮你百度搜索喔',
+            '3. s+空格+nde : 可以试试我的纠错能力',
+            '4. 发送你的经纬度',
+            '5. 重看本指令请回复help或问号',
+            '6. 更多指令请回复more',
             'PS: 点击下面的「查看全文」将跳转到我的github页'
-        ].join('')
+        ].join('\n')
       };
       // 返回值如果是list，则回复图文消息列表
-      return [reply];
+      return reply;
     }
   });
 
@@ -61,7 +61,7 @@ module.exports = exports = function(webot){
     name: 'who_are_you',
     description: '想知道我是谁吗? 发送: who?',
     // pattern 既可以是函数，也可以是 regexp 或 字符串(模糊匹配)
-    pattern: /who|你是谁?\??/i,
+    pattern: /who|你是[谁\?]+/i,
     // 回复handler也可以直接是字符串或数组，如果是数组则随机返回一个子元素
     handler: ['我是神马机器人', '微信机器人']
   });
@@ -122,28 +122,30 @@ module.exports = exports = function(webot){
   }]);
 
   // 等待下一次回复
-  webot.set({
-    name: 'ask_sex',
-    description: '发送: sex? ,然后再回复girl或boy或both或其他',
-    pattern: /^sex\??$/i,
-    handler: '你猜猜看(回复girl/boy/both)',
-    //下次回复动作,replies,可以是任何能转换为action数组的对象,如Object,Array,String,Function等
-    //object格式,key为pattern,value为handler, 注意object是没有顺序的
+  webot.set('guess my sex', {
+    pattern: /是男.还是女.|你.*男的女的/,
+    handler: '你猜猜看呐',
     replies: {
-      //正则作为key的时候,注意要转义
-      '/^g(irl)?\\??$/i': '猜错',
-      'boy': function(info, next){
-        return next(null, '猜对了');
+      '/女|girl/i': '人家才不是女人呢',
+      '/男|boy/i': '是的，我就是翩翩公子一枚',
+      'both|不男不女': '你丫才不男不女呢',
+      '不猜': '好的，再见',
+      // 请谨慎使用通配符
+      '/.*/': function(info) {
+        if (info.rewaitCount < 2) {
+          webot.rewait(info.user);
+          return '你到底还猜不猜嘛！';
+        }
+        return '看来你真的不想猜啊';
       },
-      'both': '对你无语...'
     }
     
-    //也可以是直接的函数,同action: function(info, action, [cb])
-    // replies: function(info, action){
+    // 也可以用一个函数搞定:
+    // replies: function(info){
     //   return 'haha, I wont tell you'
     // }
 
-    //也可以是数组格式,每个元素为一个action
+    // 也可以是数组格式，每个元素为一条rule
     // replies: [{
     //   pattern: '/^g(irl)?\\??$/i',
     //   handler: '猜错'
@@ -155,7 +157,7 @@ module.exports = exports = function(webot){
     //   handler: '对你无语...'
     // }]
   });
-  
+
   // 也可以这样wait,并且rewait
   webot.set({
     name: 'guess_game',
@@ -329,7 +331,8 @@ module.exports = exports = function(webot){
         {title: '豆瓣同城微信帐号', description: '豆瓣同城微信帐号二维码：douban-event', pic: 'http://i.imgur.com/ijE19.jpg', url: 'https://github.com/ktmud/weixin-robot'},
         {title: '图文消息3', description: '图文消息描述3', pic: 'https://raw.github.com/ktmud/weixin-robot-example/master/qrcode.jpg', url: 'http://www.baidu.com'}
       ];
-      return Number(info.query[1])== 1 ? [reply[0]] : reply;
+      // 发送 "news 1" 时只回复一条图文消息
+      return Number(info.param[1]) == 1 ? reply[0] : reply;
     }
   });
 
