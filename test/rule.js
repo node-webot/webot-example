@@ -279,6 +279,7 @@ describe('Rule', function(){
       sendRequest(info, function(err, json){
         detect(info, err, json);
         json.should.have.property('MsgType', 'news');
+        json.should.have.property('FuncFlag', 0);
         json.Articles.item.should.have.length(json.ArticleCount);
         json.Articles.item[0].Title[0].toString().should.match(/感谢你收听/);
         done();
@@ -287,12 +288,26 @@ describe('Rule', function(){
 
     //检测image指令
     it('should return news msg', function(done){
+      info.type = 'text';
       info.text = 'news';
       sendRequest(info, function(err, json){
         detect(info, err, json);
         json.should.have.property('MsgType', 'news');
+        json.should.have.property('FuncFlag', 0);
         json.Articles.item.should.have.length(json.ArticleCount);
         json.Articles.item[0].Title[0].toString().should.match(/微信机器人/);
+        done();
+      });
+    });
+  });
+
+  describe('fallback', function(){
+    it('should add funcflag', function(done){
+      info.type = 'text';
+      info.text = '乱麻乱麻乱麻';
+      sendRequest(info, function(err, json){
+        detect(info, err, json);
+        json.should.have.property('FuncFlag', 1);
         done();
       });
     });

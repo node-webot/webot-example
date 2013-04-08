@@ -245,8 +245,7 @@ module.exports = exports = function(webot){
   }
 
   // 可以通过回调返回结果
-  webot.set({
-    name: 'search',
+  webot.set('search', {
     description: '发送: s 关键词 ',
     pattern: /^(?:搜索?|search|百度|s\b)\s*(.+)/i,
     //handler也可以是异步的
@@ -255,8 +254,7 @@ module.exports = exports = function(webot){
 
 
   // 超时处理
-  webot.set({
-    name: 'timeout',
+  webot.set('timeout', {
     description: '输入timeout,等待5秒后回复,会提示超时',
     pattern: 'timeout',
     handler: function(info){
@@ -274,8 +272,7 @@ module.exports = exports = function(webot){
 
   //支持location消息,已经提供了geo转地址的工具，使用的是高德地图的API
   //http://restapi.amap.com/rgeocode/simple?resType=json&encode=utf-8&range=3000&roadnum=0&crossnum=0&poinum=0&retvalue=1&sid=7001&region=113.24%2C23.08
-  webot.set({
-    name: 'check_location',
+  webot.set('check_location', {
     description: '发送你的经纬度,我会查询你的位置',
     pattern: function(info){
       return info.isLocation();
@@ -288,8 +285,7 @@ module.exports = exports = function(webot){
   });
 
   //图片
-  webot.set({
-    name: 'check_image',
+  webot.set('check_image', {
     description: '发送图片,我将返回其hash值',
     pattern: function(info){
       return info.isImage();
@@ -321,8 +317,7 @@ module.exports = exports = function(webot){
   };
 
   //回复图文消息
-  webot.set({
-    name: 'reply_news',
+  webot.set('reply_news', {
     description: '发送news,我将回复图文消息你',
     pattern: /^news\s*(\d*)$/,
     handler: function(info){
@@ -341,6 +336,7 @@ module.exports = exports = function(webot){
     // 利用 error log 收集听不懂的消息，以利于接下来完善规则
     // 你也可以将这些 message 存入数据库
     error('unknown message: %s', info.text);
+    info.flag = true;
     return '你发送了「' + info.text + '」,可惜我太笨了,听不懂. 发送: help 查看可用的指令';
   });
 };
