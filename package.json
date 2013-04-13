@@ -1,6 +1,6 @@
 {
   "name": "weixin-robot-example",
-  "version": "0.0.2",
+  "version": "0.0.2-1",
   "main": "app.js",
   "dependencies": {
     "express": "~3.0",
@@ -23,7 +23,16 @@
     "start": "node app.js",
     "test": "make test"
   },
-  "repository": "",
-  "author": "",
+  "keywords": [
+    "weixin",
+    "webot",
+    "wechat"
+  ],
+  "repository": "https://github.com/ktmud/weixin-robot-example.git",
+  "author": "Jesse Yang <jyyjcc@gmail.com>",
+  "contributors": [
+    "ktmud <jyyjcc@gmail.com> (http://ktmud.com)",
+    "TZ <atian25@qq.com> (http://atian25.iteye.com/)"
+  ],
   "license": "MIT"
 }
