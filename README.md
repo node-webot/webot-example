@@ -3,16 +3,19 @@
 ## 本地运行
 
 ```bash
-git clone https://github.com/ktmud/weixin-robot-example
+git clone https://github.com/ktmud/weixin-robot-example.git
 cd weixin-robot-example/
 npm install
 make start
 ```
 
 其中，`make start` 命令会调用 `node app.js` 。
+建议你 fork 一份自己的版本，这样你就可以任意做出更改和调试了。
 
 
 ## 消息调试
+
+使用 `webot-cli` [命令行工具](https://github.com/ktmud/webot-cli)来发送测试消息。
 
 ```bash
 npm install webot-cli -g
