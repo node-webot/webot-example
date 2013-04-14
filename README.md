@@ -4,28 +4,27 @@
 
 ```bash
 git clone https://github.com/ktmud/weixin-robot-example
+cd weixin-robot-example/
 npm install
 make start
 ```
 
+其中，`make start` 命令会调用 `node app.js` 。
+
+
 ## 消息调试
 
 ```bash
-# 将当前目录的 npm 可执行文件添加到 $PATH 环境变量中
-export PATH=./node_modules/.bin:$PATH
-# 执行 webot 调试命令，默认发送文字消息
-webot 
-webot -h # 使用 -h 或 --help 查看使用帮助
-webot -i # 调试图片消息
-webot -l # 调试地理位置
-webot -e # 调试事件消息
+npm install webot-cli -g
+webot help            # 查看使用帮助
+webot send Hello      # 发送一条叫「Hello」的消息
+webot send image      # 调试图片消息
+webot send location   # 调试地理位置
+webot send event      # 调试事件消息
 ```
 
-## 本地测试
+`npm install -g` 代表全局安装 npm 模块，你可能需要 `sudo` 权限。
 
-```bash
-npm test
-```
 
 ## 在微信上试用此示例
 
@@ -43,7 +42,6 @@ npm test
 
 仓库中的 `Procfile` 为 [heroku](http://www.heroku.com/) 的配置文件。
 `manifest.yml` 为 [cloudfoundry](http://www.cloudfoundry.com/) 的示例配置文件。
-
 
 # Credit
 
