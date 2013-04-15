@@ -1,6 +1,6 @@
 {
   "name": "weixin-robot-example",
-  "version": "0.0.2-1",
+  "version": "0.0.3",
   "main": "app.js",
   "dependencies": {
     "express": "~3.0",
@@ -29,6 +29,7 @@
     "wechat"
   ],
   "repository": "https://github.com/ktmud/weixin-robot-example.git",
+  "description": "weixin-robot 模块示例",
   "author": "Jesse Yang <jyyjcc@gmail.com>",
   "contributors": [
     "ktmud <jyyjcc@gmail.com> (http://ktmud.com)",
