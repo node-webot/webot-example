@@ -204,7 +204,7 @@ module.exports = exports = function(webot){
     handler: function(info){
       var q = info.query[1];
       if (q === 'nde') {
-        webot.wait(info.user,{
+        info.wait({
           name: 'try_waiter_suggest',
           handler: function(replied_info, next){
             if (!replied_info.text) {
@@ -221,7 +221,7 @@ module.exports = exports = function(webot){
               info.query = ['s nodejs', 'nodejs'];
 
               // 执行某条规则
-              webot.exec(info, rule_search, next);
+              rule_search.exec(info, next);
             } else {
               // 或者直接调用 handler :
               rule_search.handler(info, next);
