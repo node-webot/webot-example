@@ -13,7 +13,7 @@ var geo2loc = require('./support').geo2loc;
  * 初始化路由规则
  */
 module.exports = exports = function(webot){
-  var reg_help = /^(help|帮助|\?)$/i
+  var reg_help = /^(help|\?)$/i
   webot.set({
     // name 和 description 都不是必须的
     name: 'hello help',

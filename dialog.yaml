@@ -1,12 +1,25 @@
 ---
 # 直接回复
-hi|你好|hello|nihao: 'hi,I am robot'
+hi|你好|nihao: 'hi, I am robot'
 
 # 随机回复一个
 hello: 
   - 你好
   - fine
   - how are you
+
+test:
+  - Roger that!
+  # YAML可能会把微信的表情符解析为数组，引号引起来比较保险
+  - "收到你的测试消息了！嘻嘻..[可爱]"
+
+# 回复多行文本，只需在冒号后面加上竖线（|）
+帮助: |
+  帮助这个事情，
+  说起来也不容易，
+  我也不知道怎么跟你解释，
+  发送 help 试试看呢
+
 
 # 匹配组替换
 /key (.*)/i: 

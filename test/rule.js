@@ -44,6 +44,14 @@ describe('Rule', function(){
       });
     });
 
+    it('should pass multi line yaml', function(done){
+      info.text = '帮助';
+      sendRequest(info, function(err, json){
+        detect(info, err, json, /，\n/ );
+        done();
+      });
+    });
+
     //检测who指令
     it('should return who msg', function(done){
       info.text = 'who';
