@@ -37,7 +37,7 @@ webot send event      # 调试事件消息
 
 # 搭建你自己的机器人
 
-1. copy 本仓库文件或使用 `npm init` 新建一个 package.json
+1. fork 本仓库，修改 package.json 里的各项属性
 2. 修改你自己的 app.js ，填写你在微信后台输入的 token 
 3. 参考 rules.js ，新建你自己的回复规则
 

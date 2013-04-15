@@ -1,6 +1,6 @@
 ---
 # 直接回复
-hi: 'hi,I am robot'
+hi|你好|hello|nihao: 'hi,I am robot'
 
 # 随机回复一个
 hello: 
@@ -13,7 +13,7 @@ hello:
   - '你输入的匹配关键词是:{1}'
   - '我知道了,你输入了:{1}'
 
-# 可以是一个action配置,如果没有pattern,自动使用key
+# 可以是一个rule配置,如果没有pattern,自动使用key
 yaml:
   name: 'test_yaml_object'
   handler: '这是一个yaml的object配置'

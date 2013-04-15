@@ -14,17 +14,15 @@ var geo2loc = require('./support').geo2loc;
  */
 module.exports = exports = function(webot){
   var reg_help = /^(help|帮助|\?)$/i
-  //首次关注时,会收到subscribe event
   webot.set({
     // name 和 description 都不是必须的
     name: 'hello help',
     description: '获取使用帮助，发送 help',
-    // 匹配消息规则
-    pattern: function(info){
+    pattern: function(info) {
+      //首次关注时,会收到subscribe event
       return info.event === 'subscribe' || reg_help.test(info.text);
     },
     handler: function(info){
-      //this.description = '回复help查看帮助';
       var reply = {
         title: '感谢你收听webot机器人',
         pic: 'https://raw.github.com/ktmud/weixin-robot-example/master/qrcode.jpg',
@@ -57,8 +55,7 @@ module.exports = exports = function(webot){
     return '我的主人还没教我太多东西,你可以考虑帮我加下.\n可用的指令:\n'+ reply;
   });
 
-  webot.set({
-    name: 'who_are_you',
+  webot.set('who_are_you', {
     description: '想知道我是谁吗? 发送: who?',
     // pattern 既可以是函数，也可以是 regexp 或 字符串(模糊匹配)
     pattern: /who|你是[谁\?]+/i,
@@ -67,8 +64,7 @@ module.exports = exports = function(webot){
   });
 
   // 正则匹配后的匹配组存在 info.query 中
-  webot.set({
-    name: 'your_name',
+  webot.set('your_name', {
     description: '自我介绍下吧, 发送: I am [enter_your_name]',
     pattern: /^(?:my name is|i am|我(?:的名字)?(?:是|叫)?)\s*(.*)$/i,
 
@@ -79,12 +75,11 @@ module.exports = exports = function(webot){
     handler: '你好,{1}'
   });
 
-  // make node require a yaml file possible
-  require('js-yaml');
   // 简单的纯文本对话，可以用单独的 yaml 文件来定义
+  require('js-yaml');
   webot.dialog(__dirname + '/dialog.yaml');
 
-  // 一次性加多个吧
+  // 支持一次性加多个（方便后台数据库存储规则）
   webot.set([{
     name: 'morning',
     description: '打个招呼吧, 发送: good morning',
@@ -102,7 +97,7 @@ module.exports = exports = function(webot){
       if (h < 21) return '早，什么早？找碴的找？';
       if (h >= 21) return '您还是早点睡吧...';
     }
-  },{
+  }, {
     name: 'time',
     description: '想知道几点吗? 发送: time',
     pattern: /^(几点了|time)\??$/i,
@@ -159,8 +154,7 @@ module.exports = exports = function(webot){
   });
 
   // 也可以这样wait,并且rewait
-  webot.set({
-    name: 'guess_game',
+  webot.set('guess number', {
     description: '发送: game , 玩玩猜数字的游戏吧',
     pattern: /(?:game|玩?游戏)\s*(\d*)/,
     handler: function(info){
@@ -197,8 +191,7 @@ module.exports = exports = function(webot){
   });
 
   // 调用已有的action
-  webot.set({
-    name: 'suggest_keyword',
+  webot.set('suggest keyword', {
     description: '发送: s nde ,然后再回复Y或其他',
     pattern: /^(?:搜索?|search|s\b)\s*(.+)/i,
     handler: function(info){
@@ -270,7 +263,7 @@ module.exports = exports = function(webot){
     }
   });
 
-  // 对于特殊消息的处理 可以链式调用
+  // 对于特殊消息的处理，提供缩写API
   webot.location(function(info, next){
     geo2loc(info, function(err, location, data){
       next(null, location ? '你正在' + location : '我不知道你在什么地方。');
@@ -295,33 +288,44 @@ module.exports = exports = function(webot){
       }
   }, '发送图片，获取其HASH值');
 
-  //图文的映射关系, 可以是object或function
-  webot.config.mapping = function(item, index, info){
-    //item.title = (index+1) + '> ' + item.title;
-    return item;
-  };
-
-  //回复图文消息
+  // 回复图文消息
   webot.set('reply_news', {
     description: '发送news,我将回复图文消息你',
     pattern: /^news\s*(\d*)$/,
     handler: function(info){
-      var reply = [
-        {title: '微信机器人', description: '微信机器人测试帐号：webot', pic: 'https://raw.github.com/ktmud/weixin-robot-example/master/qrcode.jpg', url: 'https://github.com/ktmud/weixin-robot-example'},
-        {title: '豆瓣同城微信帐号', description: '豆瓣同城微信帐号二维码：douban-event', pic: 'http://i.imgur.com/ijE19.jpg', url: 'https://github.com/ktmud/weixin-robot'},
-        {title: '图文消息3', description: '图文消息描述3', pic: 'https://raw.github.com/ktmud/weixin-robot-example/master/qrcode.jpg', url: 'http://www.baidu.com'}
-      ];
+      var reply = [{
+        title: '微信机器人',
+        description: '微信机器人测试帐号：webot',
+        pic: 'https://raw.github.com/ktmud/weixin-robot-example/master/qrcode.jpg',
+        url: 'https://github.com/ktmud/weixin-robot-example'
+      }, {
+        title: '豆瓣同城微信帐号',
+        description: '豆瓣同城微信帐号二维码：douban-event',
+        pic: 'http://i.imgur.com/ijE19.jpg',
+        url: 'https://github.com/ktmud/weixin-robot'
+      }, {
+        title: '图文消息3',
+        description: '图文消息描述3',
+        pic: 'https://raw.github.com/ktmud/weixin-robot-example/master/qrcode.jpg',
+        url: 'http://www.baidu.com'
+      }];
       // 发送 "news 1" 时只回复一条图文消息
       return Number(info.param[1]) == 1 ? reply[0] : reply;
     }
   });
+
+  // 可以指定图文消息的映射关系
+  webot.config.mapping = function(item, index, info){
+    //item.title = (index+1) + '> ' + item.title;
+    return item;
+  };
 
   //所有消息都无法匹配时的fallback
   webot.set(/.*/, function(info){
     // 利用 error log 收集听不懂的消息，以利于接下来完善规则
     // 你也可以将这些 message 存入数据库
     error('unknown message: %s', info.text);
-    info.flag = true;
+    info.flag = 1;
     return '你发送了「' + info.text + '」,可惜我太笨了,听不懂. 发送: help 查看可用的指令';
   });
 };

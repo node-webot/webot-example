@@ -4,18 +4,19 @@ var webot = require('weixin-robot');
 var log = require('debug')('webot-example:log');
 var verbose = require('debug')('webot-example:verbose');
 
-//启动服务
+// 启动服务
 var app = express();
 
-//实际使用时，这里填写你在微信公共平台后台填写的 token
+// 实际使用时，这里填写你在微信公共平台后台填写的 token
 var wx_token = process.env.WX_TOKEN || 'keyboardcat123';
 
+// remove this test code in production environment
 try {
   // for submodulized repository only
   webot = require('../lib/webot.js');
 } catch (e) {}
 
-//启动机器人, 接管 web 服务请求
+// 启动机器人, 接管 web 服务请求
 webot.watch(app, wx_token);
 
 // 也可以监听到子目录
