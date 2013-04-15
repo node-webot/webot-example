@@ -270,27 +270,13 @@ module.exports = exports = function(webot){
     }
   });
 
-  //支持location消息,已经提供了geo转地址的工具，使用的是高德地图的API
-  //http://restapi.amap.com/rgeocode/simple?resType=json&encode=utf-8&range=3000&roadnum=0&crossnum=0&poinum=0&retvalue=1&sid=7001&region=113.24%2C23.08
-  webot.set('check_location', {
-    description: '发送你的经纬度,我会查询你的位置',
-    pattern: function(info){
-      return info.isLocation();
-    },
-    handler: function(info, next){
-      geo2loc(info, function(err, location, data){
-        next(null, location ? '你正在' + location : '我不知道你在什么地方。');
-      });
-    }
-  });
-
-  //图片
-  webot.set('check_image', {
-    description: '发送图片,我将返回其hash值',
-    pattern: function(info){
-      return info.isImage();
-    },
-    handler: function(info, next){
+  // 对于特殊消息的处理 可以链式调用
+  webot.location(function(info, next){
+    geo2loc(info, function(err, location, data){
+      next(null, location ? '你正在' + location : '我不知道你在什么地方。');
+    });
+  }, '从地理位置获取城市信息')
+  .image(function(info, next){
       verbose('image url: %s', info.pic);
       try{
         var shasum = crypto.createHash('md5');
@@ -307,8 +293,7 @@ module.exports = exports = function(webot){
         error('Failed hashing image: %s', e)
         return '生成图片hash失败: ' + e;
       }
-    }
-  });
+  }, '发送图片，获取其HASH值');
 
   //图文的映射关系, 可以是object或function
   webot.config.mapping = function(item, index, info){
