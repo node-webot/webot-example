@@ -183,7 +183,7 @@ describe('Rule', function(){
     });
 
     //检测suggest_keyword指令
-    it('should return suggest_keyword msg', function(done){
+    it('should return keyword correction accepted result.', function(done){
       info.text = 's nde';
       sendRequest(info, function(err, json){
         detect(info, err, json,/拼写错误.*nodejs/);
@@ -197,7 +197,7 @@ describe('Rule', function(){
     });
 
     //检测suggest_keyword指令
-    it('should return suggest_keyword_not msg', function(done){
+    it('should return refused keyword correction result.', function(done){
       info.text = 's nde';
       sendRequest(info, function(err, json){
         detect(info, err, json,/拼写错误.*nodejs/);
@@ -220,17 +220,17 @@ describe('Rule', function(){
     });
 
     //检测timeout指令
-    it('should return timeout_not msg', function(done){
+    it('should pass not timeout', function(done){
       info.text = 'timeout';
       sendRequest(info, function(err, json){
         detect(info, err, json, /请等待/);
         setTimeout(function(){
-          info.text = 'not timeout';
+          info.text = 'Hehe...';
           sendRequest(info, function(err, json){
-            detect(info, err, json, /规定时限/);
+            detect(info, err, json, new RegExp('输入了: ' + info.text));
             done();
           });
-        },2000);
+        }, 2000);
       });
     });
 
@@ -245,7 +245,7 @@ describe('Rule', function(){
             detect(info, err, json, /超时/);
             done();
           });
-        },6000);
+        }, 5100);
       });
     });
   });
@@ -257,6 +257,8 @@ describe('Rule', function(){
       info.type = 'location';
       info.xPos = '23.08';
       info.yPos = '113.24';
+      info.scale = '12';
+      info.label = '广州市 某某地点';
       sendRequest(info, function(err, json){
         detect(info, err, json, /广州/);
         done();
@@ -269,6 +271,7 @@ describe('Rule', function(){
     //检测check_location指令
     it('should return good hash', function(done){
       info.type = 'image';
+      info.pic = 'http://www.baidu.com/img/baidu_sylogo1.gif';
       sendRequest(info, function(err, json){
         detect(info, err, json, /图片/);
         json.Content.should.include('你的图片');
@@ -280,7 +283,7 @@ describe('Rule', function(){
   //测试图文消息
   describe('news', function(){
     //检测首次收听指令
-    it('should return first msg', function(done){
+    it('should return subscribe message.', function(done){
       info.type = 'event';
       info.event = 'subscribe';
       info.eventKey = '';

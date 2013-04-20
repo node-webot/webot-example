@@ -6,13 +6,8 @@ var request = require('request');
 
 /**
  * 通过高德地图API查询用户的位置信息
- * @param  {Info}     info          消息类
- * @param  {Function} cb            回调函数
- * @param  {Error}    cb.err        错误信息
- * @param  {String}   cb.location   用户所在地市
- * @param  {Object}   cb.data       查询API返回的JSON
  */
-exports.geo2loc = function geo2loc(info, cb){
+exports.geo2loc = function geo2loc(param, cb){
   var options = {
     url: 'http://restapi.amap.com/rgeocode/simple',
     qs: {
@@ -24,7 +19,7 @@ exports.geo2loc = function geo2loc(info, cb){
       poinum: 0,
       retvalue: 1,
       sid: 7001,
-      region: [info.lng, info.lat].join(',')
+      region: [param.lng, param.lat].join(',')
     }
   };
   log('querying amap for: [%s]', options.qs.region);
@@ -56,7 +51,7 @@ exports.geo2loc = function geo2loc(info, cb){
  * @param  {String}   cb.result     查询结果
  */
 exports.search = function(keyword, cb){
-  log('searching: ' + keyword);
+  log('searching: %s', keyword);
   var options = {
     url: 'http://www.baidu.com/s',
     qs: {

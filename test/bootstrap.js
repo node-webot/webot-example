@@ -63,11 +63,6 @@ WeBotShell.makeRequest = function(url, token){
       user: 'client',
       type: 'text',
       text: 'help',
-      pic: 'http://www.baidu.com/img/baidu_sylogo1.gif',
-      xPos: '23.08',
-      yPos: '113.24',
-      scale: '20',
-      label: 'this is a location'
     });
 
     var content = _.template(WeBotShell.TEMPLATE)(info);

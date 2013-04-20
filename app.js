@@ -13,14 +13,14 @@ var wx_token = process.env.WX_TOKEN || 'keyboardcat123';
 // remove this test code in production environment
 try {
   // for submodulized repository only
-  webot = require('../lib/webot.js');
+  webot = require('../');
 } catch (e) {}
 
-// 启动机器人, 接管 web 服务请求
-webot.watch(app, wx_token);
+//启动机器人, 接管 web 服务请求
+webot.watch(app, { token: wx_token });
 
 // 也可以监听到子目录
-// webot.watch(app, '/weixin',  wx_token);
+// webot.watch(app, { path: '/weixin',  token: wx_token });
 
 // 载入路由规则
 require('./rules.js')(webot);

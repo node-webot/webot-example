@@ -20,13 +20,13 @@ module.exports = exports = function(webot){
     description: '获取使用帮助，发送 help',
     pattern: function(info) {
       //首次关注时,会收到subscribe event
-      return info.event === 'subscribe' || reg_help.test(info.text);
+      return info.is('event') && info.param.event === 'subscribe' || reg_help.test(info.text);
     },
     handler: function(info){
       var reply = {
         title: '感谢你收听webot机器人',
-        pic: 'https://raw.github.com/ktmud/weixin-robot-example/master/qrcode.jpg',
-        url: 'https://github.com/ktmud/weixin-robot-example',
+        pic: 'https://raw.github.com/node-webot/webot-example/master/qrcode.jpg',
+        url: 'https://github.com/node-webot/webot-example',
         description: [
           '建议你试试这几条指令:',
             '1. game : 玩玩猜数字的游戏吧',
@@ -69,7 +69,7 @@ module.exports = exports = function(webot){
     pattern: /^(?:my name is|i am|我(?:的名字)?(?:是|叫)?)\s*(.*)$/i,
 
     // handler: function(info, action){
-    //   return '你好,' + info.query[1]
+    //   return '你好,' + info.param[1]
     // }
     // 或者更简单一点
     handler: '你好,{1}'
@@ -126,9 +126,9 @@ module.exports = exports = function(webot){
       'both|不男不女': '你丫才不男不女呢',
       '不猜': '好的，再见',
       // 请谨慎使用通配符
-      '/.*/': function(info) {
+      '/.*/': function reguess(info) {
         if (info.rewaitCount < 2) {
-          webot.rewait(info.user);
+          info.rewait();
           return '你到底还猜不猜嘛！';
         }
         return '看来你真的不想猜啊';
@@ -153,85 +153,93 @@ module.exports = exports = function(webot){
     // }]
   });
 
-  // 也可以这样wait,并且rewait
+  // 定义一个 wait rule
+  webot.waitRule('wait_guess', function(info) {
+    var r = Number(info.text);
+
+    // 用户不想玩了...
+    if (isNaN(r)) {
+      info.resolve();
+      return null;
+    }
+
+    var num = info.session.guess_answer;
+
+    if (r === num) {
+      return '你真聪明!';
+    }
+
+    var rewaitCount = info.session.rewait_count || 0;
+    if (rewaitCount >= 2) {
+      return '怎么这样都猜不出来！答案是 ' + num + ' 啊！';
+    }
+
+    //重试
+    info.rewait();
+    return (r > num ? '大了': '小了') +',还有' + (2 - rewaitCount) + '次机会,再猜.';
+  });
+
   webot.set('guess number', {
     description: '发送: game , 玩玩猜数字的游戏吧',
     pattern: /(?:game|玩?游戏)\s*(\d*)/,
     handler: function(info){
       //等待下一次回复
-      var retryCount = 3;
-      var num = Number(info.query[1]) || _.random(1,9);
+      var num = Number(info.param[1]) || _.random(1,9);
 
       verbose('answer is: ' + num);
 
-      webot.wait(info.user, function(replied_info){
-        var r= Number(replied_info.text);
+      info.session.guess_answer = num;
 
-        // 用户不想玩了...
-        if (isNaN(r)) {
-          webot.data(info.user. null);
-          return null;
-        }
-
-        if (r === num){
-          return '你真聪明!';
-        }
-
-        retryCount--;
-        if (retryCount <= 0) {
-          return '怎么这样都猜不出来！答案是 ' + num + ' 啊！';
-        }
-
-        //重试
-        webot.rewait(info.user);
-        return (r > num ? '大了': '小了') +',还有' + retryCount + '次机会,再猜.';
-      });
+      info.wait('wait_guess');
       return '玩玩猜数字的游戏吧, 1~9,选一个';
     }
   });
 
+  webot.waitRule('wait_suggest_keyword', function(info, next){
+    if (!info.text) {
+      return next();
+    }
+
+    // 按照定义规则的 name 获取其他 handler
+    var rule_search = webot.get('search');
+
+    // 用户回复回来的消息
+    if (info.text.match(/^(好|要|y)$/i)) {
+      // 修改回复消息的匹配文本，传入搜索命令执行
+      info.param[0] = 's nodejs';
+      info.param[1] = 'nodejs';
+
+      // 执行某条规则
+      webot.exec(info, rule_search, next);
+      // 也可以调用 rule 的 exec 方法
+      // rule_search.exec(info, next);
+    } else {
+      info.param[1] = info.session.last_search_word;
+      // 或者直接调用 handler :
+      rule_search.handler(info, next);
+      // 甚至直接用命名好的 function name 来调用：
+      // do_search(info, next);
+    }
+    // remember to clean your session object.
+    delete info.session.last_search_word;
+  });
   // 调用已有的action
   webot.set('suggest keyword', {
     description: '发送: s nde ,然后再回复Y或其他',
     pattern: /^(?:搜索?|search|s\b)\s*(.+)/i,
     handler: function(info){
-      var q = info.query[1];
+      var q = info.param[1];
       if (q === 'nde') {
-        info.wait({
-          name: 'try_waiter_suggest',
-          handler: function(replied_info, next){
-            if (!replied_info.text) {
-              return next();
-            }
-
-            // 按照定义规则的 name 获取其他 handler
-            var rule_search = webot.get('search');
-
-            // 用户回复回来的消息
-            if (replied_info.text.match(/^(好|要|y)$/i)) {
-
-              // 修改回复消息的匹配文本，传入搜索命令执行
-              info.query = ['s nodejs', 'nodejs'];
-
-              // 执行某条规则
-              rule_search.exec(info, next);
-            } else {
-              // 或者直接调用 handler :
-              rule_search.handler(info, next);
-
-              // 甚至直接用命名好的 function name 来调用：
-              // do_search(info, next);
-            }
-          }
-        });
+        info.session.last_search_word = q;
+        info.wait('wait_suggest_keyword');
         return '你输入了:' + q + '，似乎拼写错误。要我帮你更改为「nodejs」并搜索吗?';
       }
     }
   });
 
   function do_search(info, next){
-    // pattern的解析结果将放在query里
-    var q = info.query[1];
+    // pattern的解析结果将放在param里
+    var q = info.param[1];
     log('searching: ', q);
     // 从某个地方搜索到数据...
     return search(q , next);
@@ -246,35 +254,53 @@ module.exports = exports = function(webot){
   });
 
 
+  webot.waitRule('wait_timeout', function(info) {
+    if (new Date().getTime() - info.session.wait_begin > 5000) {
+      delete info.session.wait_begin;
+      return '你的操作超时了,请重新输入';
+    } else {
+      return '你在规定时限里面输入了: ' + info.text;
+    }
+  });
+
   // 超时处理
   webot.set('timeout', {
-    description: '输入timeout,等待5秒后回复,会提示超时',
+    description: '输入timeout, 等待5秒后回复,会提示超时',
     pattern: 'timeout',
-    handler: function(info){
-      var now = new Date().getTime();
-      webot.wait(info.user, function(replied_info){
-        if(new Date().getTime() - now > 5000){
-          return '你的操作超时了,请重新输入';
-        }else{
-          return '你在规定时限里面输入了: ' + replied_info.text;
-        }
-      });
+    handler: function(info) {
+      info.session.wait_begin = new Date().getTime();
+      info.wait('wait_timeout');
       return '请等待5秒后回复';
     }
   });
 
-  // 对于特殊消息的处理，提供缩写API
-  webot.location(function(info, next){
-    geo2loc(info, function(err, location, data){
-      next(null, location ? '你正在' + location : '我不知道你在什么地方。');
-    });
-  }, '从地理位置获取城市信息')
-  .image(function(info, next){
-      verbose('image url: %s', info.pic);
+  //支持location消息,已经提供了geo转地址的工具，使用的是高德地图的API
+  //http://restapi.amap.com/rgeocode/simple?resType=json&encode=utf-8&range=3000&roadnum=0&crossnum=0&poinum=0&retvalue=1&sid=7001&region=113.24%2C23.08
+  webot.set('check_location', {
+    description: '发送你的经纬度,我会查询你的位置',
+    pattern: function(info){
+      return info.is('location');
+    },
+    handler: function(info, next){
+      geo2loc(info.param, function(err, location, data) {
+        location = location || info.label;
+        next(null, location ? '你正在' + location : '我不知道你在什么地方。');
+      });
+    }
+  });
+
+  //图片
+  webot.set('check_image', {
+    description: '发送图片,我将返回其hash值',
+    pattern: function(info){
+      return info.is('image');
+    },
+    handler: function(info, next){
+      verbose('image url: %s', info.param.picUrl);
       try{
         var shasum = crypto.createHash('md5');
 
-        var req = require('request')(info.pic);
+        var req = require('request')(info.param.picUrl);
 
         req.on('data', function(data) {
           shasum.update(data);
@@ -286,29 +312,19 @@ module.exports = exports = function(webot){
         error('Failed hashing image: %s', e)
         return '生成图片hash失败: ' + e;
       }
-  }, '发送图片，获取其HASH值');
+    }
+  });
 
   // 回复图文消息
   webot.set('reply_news', {
     description: '发送news,我将回复图文消息你',
     pattern: /^news\s*(\d*)$/,
     handler: function(info){
-      var reply = [{
-        title: '微信机器人',
-        description: '微信机器人测试帐号：webot',
-        pic: 'https://raw.github.com/ktmud/weixin-robot-example/master/qrcode.jpg',
-        url: 'https://github.com/ktmud/weixin-robot-example'
-      }, {
-        title: '豆瓣同城微信帐号',
-        description: '豆瓣同城微信帐号二维码：douban-event',
-        pic: 'http://i.imgur.com/ijE19.jpg',
-        url: 'https://github.com/ktmud/weixin-robot'
-      }, {
-        title: '图文消息3',
-        description: '图文消息描述3',
-        pic: 'https://raw.github.com/ktmud/weixin-robot-example/master/qrcode.jpg',
-        url: 'http://www.baidu.com'
-      }];
+      var reply = [
+        {title: '微信机器人', description: '微信机器人测试帐号：webot', pic: 'https://raw.github.com/node-webot/webot-example/master/qrcode.jpg', url: 'https://github.com/node-webot/webot-example'},
+        {title: '豆瓣同城微信帐号', description: '豆瓣同城微信帐号二维码：douban-event', pic: 'http://i.imgur.com/ijE19.jpg', url: 'https://github.com/node-webot/weixin-robot'},
+        {title: '图文消息3', description: '图文消息描述3', pic: 'https://raw.github.com/node-webot/webot-example/master/qrcode.jpg', url: 'http://www.baidu.com'}
+      ];
       // 发送 "news 1" 时只回复一条图文消息
       return Number(info.param[1]) == 1 ? reply[0] : reply;
     }
@@ -324,8 +340,8 @@ module.exports = exports = function(webot){
   webot.set(/.*/, function(info){
     // 利用 error log 收集听不懂的消息，以利于接下来完善规则
     // 你也可以将这些 message 存入数据库
-    error('unknown message: %s', info.text);
-    info.flag = 1;
+    log('unhandled message: %s', info.text);
+    info.flag = true;
     return '你发送了「' + info.text + '」,可惜我太笨了,听不懂. 发送: help 查看可用的指令';
   });
 };

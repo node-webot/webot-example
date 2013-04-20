@@ -8,7 +8,7 @@
     "underscore": "~1.4",
     "debug": "~0.7.2",
     "js-yaml": "~2.0.3",
-    "weixin-robot": "~0.3.2"
+    "weixin-robot": "~0.4.0"
   },
   "devDependencies": {
     "should": "*",
@@ -28,11 +28,11 @@
     "webot",
     "wechat"
   ],
-  "repository": "https://github.com/ktmud/weixin-robot-example.git",
   "description": "weixin-robot 模块示例",
+  "repository": "https://github.com/node-webot/webot-example.git",
   "author": "Jesse Yang <jyyjcc@gmail.com>",
   "contributors": [
-    "ktmud <jyyjcc@gmail.com> (http://ktmud.com)",
+    "Jesse Yang <jyyjcc@gmail.com> (http://github.com/ktmud)",
     "TZ <atian25@qq.com> (http://atian25.iteye.com/)"
   ],
   "license": "MIT"
