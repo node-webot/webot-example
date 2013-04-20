@@ -16,10 +16,13 @@ try {
   webot = require('../');
 } catch (e) {}
 
-//启动机器人, 接管 web 服务请求
-//app.use(express.query());
+// app.use(express.query());
 app.use(express.cookieParser());
+// 为了使用 waitRule 功能，需要增加 session 支持
+// 你应该将此处的 store 换为某种永久存储。请参考 http://expressjs.com/2x/guide.html#session-support
 app.use(express.session({ secret: 'abced111', store: new express.session.MemoryStore() }));
+
+//启动机器人, 接管 web 服务请求
 webot.watch(app, { token: wx_token, });
 
 // 也可以监听到子目录

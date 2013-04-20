@@ -1,10 +1,10 @@
-# [微信公共帐号机器人](https://github.com/ktmud/weixin-robot)示例 [![Build Status](https://api.travis-ci.org/ktmud/weixin-robot-example.png?branch=master)](https://travis-ci.org/ktmud/weixin-robot-example)
+# [微信公共帐号机器人](https://github.com/node-webot/weixin-robot)示例 [![Build Status](https://api.travis-ci.org/node-webot/webot-example.png?branch=master)](https://travis-ci.org/node-webot/webot-example)
 
 ## 本地运行
 
 ```bash
-git clone https://github.com/ktmud/weixin-robot-example.git
-cd weixin-robot-example/
+git clone https://github.com/node-webot/webot-example.git
+cd webot-example/
 npm install
 make start
 ```
@@ -15,7 +15,7 @@ make start
 
 ## 消息调试
 
-使用 `webot-cli` [命令行工具](https://github.com/ktmud/webot-cli)来发送测试消息。
+使用 `webot-cli` [命令行工具](https://github.com/node-webot/webot-cli)来发送测试消息。
 
 ```bash
 npm install webot-cli -g
@@ -33,7 +33,7 @@ webot send event      # 调试事件消息
 
 - 微信账号：webot-test
 
-![qrcode: webot-test](https://raw.github.com/ktmud/weixin-robot-example/master/qrcode.jpg)
+![qrcode: webot-test](https://raw.github.com/node-webot/webot-example/master/qrcode.jpg)
 
 # 搭建你自己的机器人
 
@@ -48,5 +48,7 @@ webot send event      # 调试事件消息
 
 # Credit
 
-[weixin-robot](https://github.com/ktmud/weixin-robot) 的[初始版本](https://github.com/ktmud/weixin-robot/tree/0.0.x)由[@ktmud](://github.com/ktmud)实现，
-[@atian](https://github.com/atian25)重构并扩展为 0.2 版本，目前的大部分测试用例与文档也是由他完成。
+[weixin-robot](https://github.com/node-webot/weixin-robot) 的[初始版本](https://github.com/node-webot/weixin-robot/tree/0.0.x)由[@ktmud](https://github.com/ktmud)实现，
+[@atian](https://github.com/atian25)重构并扩展为 0.2 版本。目前的测试用例也大部分由他完成。
+
+[weixin-robot] 使用了 [@JacksonTian](https://github.com/JacksonTian) 的 [wechat](https://github.com/node-webot/wechat) 组件。
