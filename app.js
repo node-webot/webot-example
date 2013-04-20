@@ -17,7 +17,10 @@ try {
 } catch (e) {}
 
 //启动机器人, 接管 web 服务请求
-webot.watch(app, { token: wx_token });
+//app.use(express.query());
+app.use(express.cookieParser());
+app.use(express.session({ secret: 'abced111', store: new express.session.MemoryStore() }));
+webot.watch(app, { token: wx_token, });
 
 // 也可以监听到子目录
 // webot.watch(app, { path: '/weixin',  token: wx_token });
