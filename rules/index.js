@@ -6,8 +6,8 @@ var verbose = debug('webot-example:verbose');
 var error = debug('webot-example:error');
 
 var _ = require('underscore')._;
-var search = require('./support').search;
-var geo2loc = require('./support').geo2loc;
+var search = require('../support').search;
+var geo2loc = require('../support').geo2loc;
 
 /**
  * 初始化路由规则
@@ -45,14 +45,15 @@ module.exports = exports = function(webot){
 
   // 更简单地设置一条规则
   webot.set(/^more$/i, function(info){
-    var reply = _.chain(webot.get()).filter(function(rule){
+    var reply = _.chain(webot.gets()).filter(function(rule){
       return rule.description;
     }).map(function(rule){
       //console.log(rule.name)
       return '> ' + rule.description;
     }).join('\n').value();
     
-    return '我的主人还没教我太多东西,你可以考虑帮我加下.\n可用的指令:\n'+ reply;
+    return ['我的主人还没教我太多东西,你可以考虑帮我加下.\n可用的指令:\n'+ reply,
+      '没有更多啦！当前可用指令：\n' + reply];
   });
 
   webot.set('who_are_you', {

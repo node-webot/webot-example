@@ -1,11 +1,13 @@
 var should = require('should');
 
 var token = process.env.WX_TOKEN || 'keyboardcat123';
+var token2 = process.env.WX_TOKEN_2 || 'weixinToken2';
 var port = process.env.PORT || 3000;
 
 var bootstrap = require('./bootstrap.js');
 var makeRequest = bootstrap.makeRequest;
-var sendRequest = makeRequest('http://localhost:' + port, token);
+var sendRequest = makeRequest('http://localhost:' + port + '/wechat', token);
+var sendRequest2 = makeRequest('http://localhost:' + port + '/wechat_2', token2);
 
 var app = require('../app.js');
 
@@ -21,8 +23,31 @@ var detect = function(info, err, json, content){
   }
 };
 
-//测试规则
-describe('Rule', function(){
+describe('wechat2', function(){
+  //初始化
+  var info = null;
+  beforeEach(function(){
+    info = {
+      sp: 'webot',
+      user: 'client',
+      type: 'text'
+    };
+  });
+
+  //测试文本消息
+  describe('text', function(){
+    //检测more指令
+    it('should return hi', function(done){
+      info.text = 'hello';
+      sendRequest2(info, function(err, json){
+        detect(info, err, json, /^hi.$/);
+        done();
+      });
+    });
+  });
+});
+
+describe('wechat1', function(){
   //初始化
   var info = null;
   beforeEach(function(){
@@ -39,7 +64,7 @@ describe('Rule', function(){
     it('should return more msg', function(done){
       info.text = 'more';
       sendRequest(info, function(err, json){
-        detect(info, err, json, /可用的指令/ );
+        detect(info, err, json, /指令/ );
         done();
       });
     });

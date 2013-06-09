@@ -9,6 +9,7 @@ var app = express();
 
 // 实际使用时，这里填写你在微信公共平台后台填写的 token
 var wx_token = process.env.WX_TOKEN || 'keyboardcat123';
+var wx_token2 = process.env.WX_TOKEN_2 || 'weixinToken2';
 
 // remove this test code in production environment
 try {
@@ -22,14 +23,22 @@ app.use(express.cookieParser());
 // 你应该将此处的 store 换为某种永久存储。请参考 http://expressjs.com/2x/guide.html#session-support
 app.use(express.session({ secret: 'abced111', store: new express.session.MemoryStore() }));
 
-//启动机器人, 接管 web 服务请求
-webot.watch(app, { token: wx_token, });
+// 启动机器人, 接管 web 服务请求，默认会监听根目录请求
+webot.watch(app, { token: wx_token, path: '/wechat' });
 
-// 也可以监听到子目录
-// webot.watch(app, { path: '/weixin',  token: wx_token });
+// 若省略 path 参数，会监听到根目录
+// webot.watch(app, { token: wx_token, });
+
+// 可以建立多个实例，并监听到不同 path ，
+// 后面指定的 path 不可为前面实例的子目录
+var webot2 = new webot.Webot();
+
+webot2.set('hello', 'hi.');
+
+webot2.watch(app, { token: wx_token2, path: '/wechat_2' });
 
 // 载入路由规则
-require('./rules.js')(webot);
+require('./rules')(webot);
 
 // 在环境变量提供的 $PORT 或 3000 端口监听
 var port = process.env.PORT || 3000;
