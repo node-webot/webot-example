@@ -23,13 +23,16 @@ app.use(express.cookieParser());
 // 你应该将此处的 store 换为某种永久存储。请参考 http://expressjs.com/2x/guide.html#session-support
 app.use(express.session({ secret: 'abced111', store: new express.session.MemoryStore() }));
 
-// 启动机器人, 接管 web 服务请求，默认会监听根目录请求
+// 启动机器人, 接管 web 服务请求
 webot.watch(app, { token: wx_token, path: '/wechat' });
 
-// 若省略 path 参数，会监听到根目录
-// webot.watch(app, { token: wx_token, });
+// 载入路由规则
+require('./rules')(webot);
 
-// 可以建立多个实例，并监听到不同 path ，
+// 若省略 path 参数，会监听到根目录
+// webot.watch(app, { token: wx_token });
+
+// 建立多个实例，并监听到不同 path ，
 // 后面指定的 path 不可为前面实例的子目录
 var webot2 = new webot.Webot();
 
@@ -37,16 +40,14 @@ webot2.set('hello', 'hi.');
 
 webot2.watch(app, { token: wx_token2, path: '/wechat_2' });
 
-// 载入路由规则
-require('./rules')(webot);
-
 // 在环境变量提供的 $PORT 或 3000 端口监听
 var port = process.env.PORT || 3000;
 app.listen(port, function(){
   log("Listening on %s", port);
 });
 
-// 微信后台只允许 80 端口，你可能需要自己做一层 proxy
+// 微信接口地址只允许服务放在 80 端口
+// 所以需要做一层 proxy
 app.enable('trust proxy');
 
 // 当然，如果你的服务器允许，你也可以直接用 node 来 serve 80 端口
