@@ -273,6 +273,26 @@ describe('wechat1', function(){
         }, 5100);
       });
     });
+
+    it('should handle list', function(done) {
+      info.text = 'ok webot';
+      sendRequest(info, function(err, json){
+        detect(info, err, json, /可用指令/);
+        info.text = '2';
+        sendRequest(info, function(err, json){
+          detect(info, err, json, /请选择人名/);
+          info.text = '3';
+          sendRequest(info, function(err, json){
+            detect(info, err, json, /请输入/);
+            info.text = 'David';
+            sendRequest(info, function(err, json){
+              detect(info, err, json, /输入了 David/);
+              done();
+            });
+          });
+        });
+      });
+    });
   });
 
   //测试地理位置

@@ -17,8 +17,17 @@ make start
 
 使用 `webot-cli` [命令行工具](https://github.com/node-webot/webot-cli)来发送测试消息。
 
+安装：
+
 ```bash
 npm install webot-cli -g
+```
+
+`npm install -g` 代表全局安装 npm 模块，你可能需要 `sudo` 权限。
+
+使用：
+
+```
 webot help            # 查看使用帮助
 webot send Hello      # 发送一条叫「Hello」的消息
 webot send image      # 调试图片消息
@@ -26,7 +35,8 @@ webot send location   # 调试地理位置
 webot send event      # 调试事件消息
 ```
 
-`npm install -g` 代表全局安装 npm 模块，你可能需要 `sudo` 权限。
+`webot-cli` 默认访问的接口地址是 http://127.0.0.1:3000 ，要调试本示例的程序，
+你需要指定 `webot send --des http://127.0.0.1:3000/wechat'
 
 
 ## 在微信上试用此示例

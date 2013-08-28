@@ -9,6 +9,8 @@ var _ = require('underscore')._;
 var search = require('../support').search;
 var geo2loc = require('../support').geo2loc;
 
+var package_info = require('../package.json');
+
 /**
  * 初始化路由规则
  */
@@ -275,7 +277,44 @@ module.exports = exports = function(webot){
     }
   });
 
-  //支持location消息,已经提供了geo转地址的工具，使用的是高德地图的API
+  /**
+   * Wait rules as lists
+   *
+   * 实现类似电话客服的自动应答流程
+   *
+   */
+  webot.set(/^ok webot$/i, function(info) {
+    info.wait('list');
+    return '可用指令：\n' +
+           '1 - 查看程序信息\n' + 
+           '2 - 进入名字选择';
+  });
+  webot.waitRule('list', {
+    '1': 'webot ' + package_info.version,
+    '2': function(info) {
+      info.wait('list-2');
+      return '请选择人名:\n' +
+             '1 - Marry\n' + 
+             '2 - Jane\n' +
+             '3 - 自定义'
+    }
+  });
+  webot.waitRule('list-2', {
+    '1': '你选择了 Marry',
+    '2': '你选择了 Jane',
+    '3': function(info) {
+      info.wait('list-2-3');
+      return '请输入你想要的人';
+    }
+  });
+  webot.waitRule('list-2-3', function(info) {
+    if (info.text) {
+      return '你输入了 ' + info.text;
+    }
+  });
+
+
+  //支持location消息 此examples使用的是高德地图的API
   //http://restapi.amap.com/rgeocode/simple?resType=json&encode=utf-8&range=3000&roadnum=0&crossnum=0&poinum=0&retvalue=1&sid=7001&region=113.24%2C23.08
   webot.set('check_location', {
     description: '发送你的经纬度,我会查询你的位置',
