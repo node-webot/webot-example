@@ -16,7 +16,7 @@ var detect = function(info, err, json, content){
   should.exist(info);
   should.not.exist(err);
   should.exist(json);
-  json.should.be.a('object');
+  json.should.have.type('object');
   if(content){
     json.should.have.property('Content');
     json.Content.should.match(content);

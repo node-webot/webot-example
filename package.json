@@ -11,9 +11,9 @@
     "weixin-robot": "~0.4.0"
   },
   "devDependencies": {
-    "should": "*",
-    "xml2js": "*",
-    "mocha": "*"
+    "mocha": "~1.13.0",
+    "should": "~2.0.1",
+    "xml2js": "~0.2.8"
   },
   "engines": {
     "node" : ">=0.8.0",
