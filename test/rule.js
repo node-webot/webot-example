@@ -335,7 +335,6 @@ describe('wechat1', function(){
       sendRequest(info, function(err, json){
         detect(info, err, json);
         json.should.have.property('MsgType', 'news');
-        json.should.have.property('FuncFlag', 0);
         json.Articles.item.should.have.length(json.ArticleCount);
         json.Articles.item[0].Title[0].toString().should.match(/感谢你收听/);
         done();
@@ -349,7 +348,6 @@ describe('wechat1', function(){
       sendRequest(info, function(err, json){
         detect(info, err, json);
         json.should.have.property('MsgType', 'news');
-        json.should.have.property('FuncFlag', 0);
         json.Articles.item.should.have.length(json.ArticleCount);
         json.Articles.item[0].Title[0].toString().should.match(/微信机器人/);
         done();
@@ -357,15 +355,4 @@ describe('wechat1', function(){
     });
   });
 
-  describe('fallback', function(){
-    it('should add funcflag', function(done){
-      info.type = 'text';
-      info.text = '乱麻乱麻乱麻';
-      sendRequest(info, function(err, json){
-        detect(info, err, json);
-        json.should.have.property('FuncFlag', 1);
-        done();
-      });
-    });
-  });
 });

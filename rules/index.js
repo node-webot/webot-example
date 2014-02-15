@@ -6,8 +6,8 @@ var verbose = debug('webot-example:verbose');
 var error = debug('webot-example:error');
 
 var _ = require('underscore')._;
-var search = require('../support').search;
-var geo2loc = require('../support').geo2loc;
+var search = require('../lib/support').search;
+var geo2loc = require('../lib/support').geo2loc;
 
 var package_info = require('../package.json');
 
@@ -30,13 +30,13 @@ module.exports = exports = function(webot){
         pic: 'https://raw.github.com/node-webot/webot-example/master/qrcode.jpg',
         url: 'https://github.com/node-webot/webot-example',
         description: [
-          '建议你试试这几条指令:',
-            '1. game : 玩玩猜数字的游戏吧',
-            '2. s+空格+关键词 : 我会帮你百度搜索喔',
-            '3. s+空格+nde : 可以试试我的纠错能力',
-            '4. 发送你的经纬度',
-            '5. 重看本指令请回复help或问号',
-            '6. 更多指令请回复more',
+          '你可以试试以下指令:',
+            'game : 玩玩猜数字的游戏吧',
+            's+空格+关键词 : 我会帮你百度搜索喔',
+            's+空格+nde : 可以试试我的纠错能力',
+            '使用「位置」发送你的经纬度',
+            '重看本指令请回复help或问号',
+            '更多指令请回复more',
             'PS: 点击下面的「查看全文」将跳转到我的github页'
         ].join('\n')
       };
@@ -53,7 +53,7 @@ module.exports = exports = function(webot){
       //console.log(rule.name)
       return '> ' + rule.description;
     }).join('\n').value();
-    
+
     return ['我的主人还没教我太多东西,你可以考虑帮我加下.\n可用的指令:\n'+ reply,
       '没有更多啦！当前可用指令：\n' + reply];
   });
@@ -137,7 +137,7 @@ module.exports = exports = function(webot){
         return '看来你真的不想猜啊';
       },
     }
-    
+
     // 也可以用一个函数搞定:
     // replies: function(info){
     //   return 'haha, I wont tell you'
@@ -286,7 +286,7 @@ module.exports = exports = function(webot){
   webot.set(/^ok webot$/i, function(info) {
     info.wait('list');
     return '可用指令：\n' +
-           '1 - 查看程序信息\n' + 
+           '1 - 查看程序信息\n' +
            '2 - 进入名字选择';
   });
   webot.waitRule('list', {
@@ -294,7 +294,7 @@ module.exports = exports = function(webot){
     '2': function(info) {
       info.wait('list-2');
       return '请选择人名:\n' +
-             '1 - Marry\n' + 
+             '1 - Marry\n' +
              '2 - Jane\n' +
              '3 - 自定义'
     }
